@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.core.validators import RegexValidator, MaxLengthValidator
+from django.core.validators import RegexValidator, MaxLengthValidator, MinValueValidator, MaxValueValidator
 from django.utils import timezone
 
 from users.models import User
@@ -11,7 +11,26 @@ from users.models import User
 # Create your models here.
 class Task(models.Model):
     """Модель поручений"""
-    name = models.CharField(max_length=50, blank=True, verbose_name='Название задачи')
+
+    PERIOD_DAY01 = 1
+    PERIOD_DAY02 = 2
+    PERIOD_DAY03 = 3
+    PERIOD_DAY04 = 4
+    PERIOD_DAY05 = 5
+    PERIOD_DAY06 = 6
+    PERIOD_DAY07 = 7
+
+    PERIODS = (
+        (PERIOD_DAY01, 'раз в день'),
+        (PERIOD_DAY02, 'раз в 2 дня'),
+        (PERIOD_DAY03, 'раз в 3 дня'),
+        (PERIOD_DAY04, 'раз в 4 дня'),
+        (PERIOD_DAY05, 'раз в 5 дней'),
+        (PERIOD_DAY06, 'раз в 6 дней'),
+        (PERIOD_DAY07, 'раз в неделю'),
+    )
+
+    name_task = models.CharField(max_length=50, blank=True, verbose_name='Название задачи')
     description = models.CharField(blank=True, null=True, validators=[
         MaxLengthValidator(255, message='Длина поля не должна превышать 255 символов.')
     ],
@@ -30,6 +49,9 @@ class Task(models.Model):
     id_boss = models.ForeignKey(User, on_delete=models.CASCADE, null=True, verbose_name='Имя_руководителя', related_name="tasks_as_boss")
     readiness_boss = models.BooleanField(default=False, verbose_name='Подтверждение выполнения начальником')
     readiness_executor = models.BooleanField(default=False, verbose_name='Подтверждение выполнения исполнителем')
+    period = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(7)], default=PERIOD_DAY01,
+                                 choices=PERIODS, verbose_name='периодичность')
+
 
     def validate_date(self):
         if self < timezone.now().date():

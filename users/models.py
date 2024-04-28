@@ -46,6 +46,7 @@ class User(AbstractUser):
     ],
                              verbose_name='Номер телефона')
     is_boss = models.BooleanField(default=False, null=True, verbose_name='Руководитель')
+    chat_id = models.IntegerField(null=True, verbose_name='идентификатор телеграм')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

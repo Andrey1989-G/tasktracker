@@ -13,7 +13,7 @@ def send_message_bot(task_id):
         url=f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage",
         data={
             'chat_id': reminder.owner.phone,
-            'text': f'Срок выполнения поручения истек. Прошу выполнить поручение'
+            'text': f'У Вас новое поручение. Прошу выполнить поручение'
                     f' [{reminder.name} в кратчайшие сроки] !'
         }
     )
