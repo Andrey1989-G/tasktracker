@@ -51,9 +51,15 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+    def create(self, validated_data):
+        user = User.objects.create(**validated_data)
+        user.set_password(user.password)
+        user.save()
+        return user
+
     def __str__(self):
         return f"{self.name} {self.surname} {self.family}"
 
     class Meta:
         verbose_name = 'пользователь'
-        verbose_name_plural = 'пользователя'
+        verbose_name_plural = 'пользователи'

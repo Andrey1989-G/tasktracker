@@ -1,6 +1,5 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from main_tasktracker.models import Task
 from main_tasktracker.paginators import MainPaginator
@@ -24,13 +23,13 @@ class TaskCreateAPIView(generics.CreateAPIView):
         create_task(new_task)
 
 class TaskListAPIView(generics.ListAPIView):
-    """Представление для отображения реквизитов списка поручений исполнителя."""
+    """Представление для отображения списка поручений исполнителя."""
     permission_classes = [IsAuthenticated]
     serializer_class = TaskSerializer
     pagination_class = MainPaginator
 
     def get_queryset(self):
-        """Накладываем отбор по исполнителям поручений."""
+        """Получаем список."""
         return Task.objects.all()
 
 class TaskViewAPIView(generics.RetrieveAPIView):
@@ -57,20 +56,20 @@ class TaskDeleteAPIView(generics.DestroyAPIView):
     queryset = Task.objects.all()
 
 class TaskExecutorListAPIView(generics.ListAPIView):
-    """Отображение списка выполненных поручений исполнителем"""
+    """Отображение списка не выполненных поручений исполнителя"""
     permission_classes = [IsAuthenticated]
     serializer_class = TaskSerializer
 
     def get_queryset(self):
         """Фильтр по признаку Подтверждение выполнения исполнителем"""
-        return Task.objects.filter(readiness_executor=True)
+        return Task.objects.filter(readiness_executor=False)
 
 
 class TaskBossListAPIView(generics.ListAPIView):
-    """Отображение списка выполненных поручений начальником"""
+    """Отображение списка поручений начальника"""
     permission_classes = [IsAuthenticated]
     serializer_class = TaskSerializer
 
     def get_queryset(self):
         """Фильтр по признаку Подтверждение выполнения начальником"""
-        return Task.objects.filter(readiness_boss=True)
+        return Task.objects.filter(readiness_boss=False)
